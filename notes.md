@@ -373,9 +373,9 @@ export default defineConfig({
 ### 3.9 watch
 
 - 作用：监视数据的变化
-- 特点：Vue3中的watch只能监视以下四种数据：
-    1. ref定义的数据
-    2. reactive定义的数据
+- 特点：Vue3中的`watch`只能监视以下四种数据：
+    1. `ref`定义的数据
+    2. `reactive`定义的数据
     3. 函数返回一个值
     4. 一个包含上述内容的数组
 
@@ -509,3 +509,66 @@ export default defineConfig({
 
 </script>
 ```
+
+#### 情况四
+
+监视`ref`或`reactive`定义的【对象类型】数据种的某个属性，注意点如下：
+
+- 若该属性不是【对象类型】，需要写成函数形式。
+- 若该属性值依然是【对象类型】，可直接写（只监视细枝末节），也可写成函数（不再监视细枝末节），不过建议写成函数。
+
+```ts
+<template>
+    <div class="person">
+        <h2>姓名：{{person.name}}</h2>
+        <h2>年龄：{{person.age}}</h2>
+        <h2>汽车：{{person.car.c1}}、{{person.car.c2}}</h2>
+        <button @click="changeName">修改名字</button>
+        <button @click="changeAge">修改年龄</button>
+        <button @click="changeC1">修改第一台车</button>
+        <button @click="changeC2">修改第二台车</button>
+        <button @click="changeCar">修改整个车</button>
+    </div>
+</template>
+
+<script lang="ts" setup name="Person">
+    import {reactive} from 'Vue'
+
+    // 数据
+    let person = reactive({
+        name: '张三',
+        age: 18,
+        car: {
+            c1: '奔驰',
+            c2: '宝马'
+        }
+    })
+
+    // 方法
+    function changeName() {
+        person.name += '~'
+    }
+    function changeAge() {
+        person.age += 1
+    }
+    function changeC1() {
+        person.car.c1 = '奥迪'
+    }
+    function changeC2() {
+        person.car.c2 = '大众'
+    }
+    function changeCar() {
+        person.car = {c1: '雅迪', c2: '爱玛'}
+    }
+
+    // 监视，情况四：监视响应式对象中的某个属性，且该属性是基本类型的，要写成函数式
+    watch(() => person.name, (newValue, oldValue) => {
+        console.log('person.name变化了', newValue, oldValue)
+    })
+
+</script>
+
+```
+
+getter函数：能返回一个值的函数。
+结论：监视的如果是对象里的属性，那么最好写函数式
