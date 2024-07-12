@@ -9,14 +9,17 @@
 - 内存减少54%
 
 ### 1.2 源码的升级
+
 - 使用Proxy代替defineProperty实现响应式
 - 重写虚拟DOM的实现和Tree-Shaking
 
 ### 1.3 拥抱TypeScript
+
 - Vue3可以更好的支持TypeScript
 
 ### 1.4 新的特性
-1.  Composition API（组合API）
+
+1. Composition API（组合API）
     - setup
     - ref与reactive
     - computed与watch
@@ -35,9 +38,11 @@
 ## 2. 创建Vue3工程
 
 ### 2.2基于vite创建 - 和webpack等价
+
 vite是新一代前端构建工具
+
 - 轻量快速的热承载（HMR），能实现快速的服务启动
-- 对TypeScript、JSX、CSS登实现极速的服务器动
+- 对TypeScript、JSX、CSS登实现极速的服务器启动
 - 真正的按需编译，不在等待整个应用编译完成
 - 用webpack架构的时候，当路由特别多的时候，项目启动非常慢
 - 用vite的时候，等待用户，用户看什么，再去处理什么，而不像webpack不管你看什么，全部都处理
@@ -45,6 +50,7 @@ vite是新一代前端构建工具
 ## 3. Vue3核心语法
 
 ### 3.1 【Options API】与【CompositionAPI】
+
 - `Vue2`的`API`设计是`Options`（配置）风格的
 - `Vue3`的`API`设计是`Composition`（组合）风格的
 
@@ -59,6 +65,7 @@ Composition API的优势
 ### 3.2 setup
 
 setup与Options API的关系
+
 - Vue2的配置（data、methods...）中可以访问到setup中的属性、方法
 - 但在setup中不能访问到Vue2的配置（data、methods...）
 - 如果与Vue2冲突，则setup优先
@@ -66,7 +73,7 @@ setup与Options API的关系
 setup语法糖
 setup函数有一个语法糖，这个语法糖可以让我们把setup独立出去，代码如下
 
-```vue
+```ts
 <template>
     <div class="person">
         <h2>姓名：{{name}}</h2>
@@ -106,6 +113,7 @@ setup函数有一个语法糖，这个语法糖可以让我们把setup独立出�
 ```
 
 扩展：上述代码，还需要编写一个不写setup的标签，去指定组件名字，比较麻烦，我们可以借助vite中的插件简化
+
 1. 第一步：`npm i vite-plugin-vue-setup-extend -D`
 2. 第二步：`vite.config.ts`
 
@@ -124,10 +132,10 @@ export default defineConfig({
 - 语法：`let xxx = ref(初始值)`
 - 返回值：一个`RefImpl`的实例对象，简称`ref`对象或`ref`，`ref`对象的`value`属性是响应式的
 - 注意点：
-    - `JS`中操作数据需要：`xxx.value`，但模板中不需要`.value`，直接使用即可
-    - 对于`let name = ref('张三')`来说，`name`不是响应式的，`name.value`是响应式的
+  - `JS`中操作数据需要：`xxx.value`，但模板中不需要`.value`，直接使用即可
+  - 对于`let name = ref('张三')`来说，`name`不是响应式的，`name.value`是响应式的
 
-```vue
+```ts
 <template>
     <div class="person">
         <h2>姓名：{{name}}</h2>
@@ -166,9 +174,9 @@ export default defineConfig({
 </script>
 ```
 
-### 3.4 reactive只能创建对象类型的响应式数据：
+### 3.4 reactive只能创建对象类型的响应式数据
 
-```vue
+```ts
 <template>
     <div class="person">
         <h2>一辆{{car.brand}}车，价值{{car.price}}万</h2>
@@ -208,7 +216,7 @@ export default defineConfig({
 
 ### 3.5 ref创建：对象类型的响应式数据
 
-```vue
+```ts
 <template>
     <div class="person">
         <h2>一辆{{car.brand}}车，价值{{car.price}}万</h2>
@@ -250,12 +258,14 @@ export default defineConfig({
 ### 3.6 ref对比reactive
 
 宏观角度看：
+
 1. `ref`用来定义：基本类型数据、对象类型数据
 2. `reactive`用来定义：对象类型数据
 
 - 区别：
     1. `ref`创建的变量必须使用`.value`（可以使用`volar`插件自动添加`.value`）
     2. reactive重新分配了一个新对象，会失去响应式（可以使用Object.assign去整体替换）
+
     ```ts
 
     let car = reactive({brand: '宝马', price: 100})
@@ -269,6 +279,7 @@ export default defineConfig({
     }
 
     ```
+
 - 使用原则：
     1. 若需要一个基本类型的响应式数据，必须使用`ref`
     2. 若需要一个响应式对象，层级不深，`ref`、`reactive`都可以
@@ -279,7 +290,8 @@ export default defineConfig({
 - 作用：将一个响应式对象中的每一个属性，转换为ref对象
 - 备注：toRefs与toRef功能一致，但toRefs可以批量转换
 - 语法如下：
-    ```vue
+
+    ```ts
     <template>
         <div class="person">
             <h2>姓名：{{name}}</h2>
@@ -316,7 +328,7 @@ export default defineConfig({
 
 作用：根据已有数据计算出新数据
 
-```vue
+```ts
 <template>
     <div class="person">
         姓：<input type="text" v-model="firstName">
@@ -339,7 +351,7 @@ export default defineConfig({
     
     // 这么定义的fullName是一个计算属性，可读可写
     let fullName = computed({
-        get(){
+        get() {
             return firstName.value.slice(0,1).toUpperCase() + firstName.value.slice(1) + '-' + lastName.value
         },
         set(val) {
@@ -352,8 +364,6 @@ export default defineConfig({
         fullName.value = 'li-si'
     }
 
-
-
 </script>
 
 <style scoped></style>
@@ -363,7 +373,7 @@ export default defineConfig({
 ### 3.9 watch
 
 - 作用：监视数据的变化
-- 特点：Vue3中的watch只能监视以下四中数据：
+- 特点：Vue3中的watch只能监视以下四种数据：
     1. ref定义的数据
     2. reactive定义的数据
     3. 函数返回一个值
@@ -371,9 +381,9 @@ export default defineConfig({
 
 #### 情况一
 
-监视ref定义的”基本类型“数据：直接写数据名即可，监视的是其的value值的改变
+监视`ref`定义的”基本类型“数据：直接写数据名即可，监视的是其的value值的改变
 
-```vue
+```ts
 <template>
     <div class="person">
         <h2>当前求和为：{{sum}}</h2>
@@ -410,19 +420,44 @@ export default defineConfig({
 
 监视ref定义的【对象类型】数据：直接写数据名、监视的是对象的【地址值】，若想监视对象内部的数据，要手动开启深度监视。
 
-```vue
+> 注意:
+>
+> - 若修改的是`ref`定义的对象中的属性, `newValue`和`oldValue`都是新值, 因为他们是同一个对象.
+> - 若修改整个`ref`定义的对象, `newValue`是新值, `oldValue`是旧值, 因为不是一个对象了.
+
+```ts
 <template>
     <div class="person">
         <h2>姓名：{{person.name}}</h2>
         <h2>年龄：{{person.age}}</h2>
-        <button @click="changeNanme"修改名字></button>
+        <button @click="changeName"修改名字></button>
         <button @click="changeAge">修改年龄</button>
+        <button @click="changePerson">修改整个人</button>
     </div>
 </template>
 
 <script lang="ts" setup name="Person">
     import {ref, watch} from 'vue'
-
+    
+    // 数据
+    let perdon = ref({
+        name: '张三',
+        age: 18
+    })
+    // 方法
+    function changeName() {
+        person.value.name += '~'
+    }
+    function changeAge() {
+        person.value.age += 1
+    }
+    function changePerson() {
+        person.value = {name: '李四', age: 20}
+    }
+    // 监视
+    watch(person, (newValue, oldValue) => {
+        console.log('person变化了', newValue, oldValue)
+    }, {deep: true})
 
 </script>
 
