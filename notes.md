@@ -454,7 +454,11 @@ export default defineConfig({
     function changePerson() {
         person.value = {name: '李四', age: 20}
     }
-    // 监视
+    /* 监视, 情况二
+       watch的第一个参数是: 被监视的数据
+       watch的第二个参数是: 监视的回调
+       watch的第三个参数是: 配置对象 (deep, immediate等等...)
+    */
     watch(person, (newValue, oldValue) => {
         console.log('person变化了', newValue, oldValue)
     }, {deep: true})
@@ -463,4 +467,45 @@ export default defineConfig({
 
 <style scoped></style>
 
+```
+
+#### 情况三
+
+监视`reactive`定义的【对象类型】数据，且默认开启了深度监视。
+
+```ts
+<template>
+    <div class="person">
+        <h2>姓名：{{person.name}}</h2>
+        <h2>年龄：{{person.age}}</h2>
+        <button @click="changeName"修改名字></button>
+        <button @click="changeAge">修改年龄</button>
+        <button @click="changePerson">修改整个人</button>
+    </div>
+</template>
+
+<script setup lang="ts" name="Person">
+    import {reactive, watch} from 'Vue'
+    // 数据
+    let perdon = reactive({
+        name: '张三',
+        age: 18
+    })
+    // 方法
+    function changeName() {
+        person.value.name += '~'
+    }
+    function changeAge() {
+        person.value.age += 1
+    }
+    function changePerson() {
+        Object.assign(person, {name: '李四', age: 20})
+    }
+
+    // 默认开启的深度监视是关不掉的
+    watch(person, (newValue, oldValue) => {
+        console.log('person变化了', newValue, oldValue)
+    })
+
+</script>
 ```
